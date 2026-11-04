@@ -45,15 +45,16 @@ window.__ModuleLoader__.load({
     }
 
     const CSS = `
-      .dsn-root { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 2147482000; pointer-events: none; font-size: 13px; color: var(--dsw-alias-label-primary); }
+      .dsn-root { position: fixed; left: 16px; top: 50%; transform: translateY(-50%); z-index: 2147482000; pointer-events: none; font-size: 13px; color: var(--dsw-alias-label-primary); }
       .dsn-tab { pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 7px; border: 1px solid var(--dsw-alias-border-l1); border-radius: 10px; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-secondary); cursor: grab; box-shadow: 0 2px 10px rgba(0,0,0,.12); touch-action: none; user-select: none; }
       .dsn-dragging .dsn-tab { cursor: grabbing; }
       .dsn-tab:hover { color: var(--dsw-alias-brand-primary); border-color: var(--dsw-alias-border-l2); }
       .dsn-badge { min-width: 16px; padding: 0 4px; border-radius: 8px; background: var(--dsw-alias-brand-primary); color: var(--dsw-alias-bg-base); font-size: 10px; line-height: 16px; text-align: center; }
-      .dsn-panel { position: absolute; top: 50%; transform: translateY(-50%); right: calc(100% + 10px); pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: 62vh; display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
+      .dsn-panel { position: absolute; top: 50%; transform: translateY(-50%); left: calc(100% + 10px); pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: 62vh; display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
       .dsn-head { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--dsw-alias-border-l1); background: var(--dsw-alias-bg-layer-2); }
       .dsn-title { flex: 1; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
       .dsn-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+      .dsn-root.dsn-flip .dsn-panel { left: auto; right: calc(100% + 10px); }
       .dsn-note { background: var(--dsw-alias-bg-layer-2); border: 1px solid var(--dsw-alias-border-l1); border-radius: 9px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
       .dsn-note-head { display: flex; align-items: center; justify-content: flex-end; margin: -4px -4px -2px 0; }
       .dsn-toggle { border: 1px solid var(--dsw-alias-border-l1); background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-secondary); border-radius: 6px; font: inherit; font-size: 10px; line-height: 14px; padding: 0 5px; cursor: pointer; }
@@ -767,10 +768,17 @@ window.__ModuleLoader__.load({
       if (!settings.overlay) return null;
 
       const rootStyle = pos ? { left: `${pos.x}px`, top: `${pos.y}px`, right: 'auto', bottom: 'auto', transform: 'none' } : undefined;
+      // The panel opens away from the nearest screen edge, so a tab dragged over
+      // to the right half does not push its own panel off-screen.
+      const panelWidth = settings.width || 320;
+      const flipped = pos && typeof window !== 'undefined' && window.innerWidth > 0
+        ? pos.x + 40 + panelWidth > window.innerWidth - 16
+        : false;
+      const rootClass = ['dsn-root', dragging ? 'dsn-dragging' : '', flipped ? 'dsn-flip' : ''].filter(Boolean).join(' ');
 
       return h(
         'div',
-        { className: dragging ? 'dsn-root dsn-dragging' : 'dsn-root', style: rootStyle },
+        { className: rootClass, style: rootStyle },
         h(
           'div',
           {

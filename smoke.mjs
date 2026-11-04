@@ -269,8 +269,9 @@ assert(empty.styles[0].textContent.includes('--dsw-alias-'), 'stylesheet does no
 assert(empty.styles[0].textContent.length > 1000, `stylesheet is only ${empty.styles[0].textContent.length} B`);
 
 // The tab must not move when the panel opens. The panel is taken out of flow and
-// hung to the left of the tab; as a flex sibling it widened the root, and the root
-// is anchored to the right edge, so opening it slid the tab away instead.
+// hung beside the tab; as a flex sibling it widened the root, and the root is
+// edge-anchored, so opening it slid the tab away instead. It sits on the left
+// edge and opens rightwards, flipping only when that would leave the screen.
 const sheet = empty.styles[0].textContent;
 const rootRule = (/\.dsn-root \{[^}]*\}/.exec(sheet) || [''])[0];
 const panelRule = (/\.dsn-panel \{[^}]*\}/.exec(sheet) || [''])[0];
@@ -278,7 +279,11 @@ assert(rootRule, 'no .dsn-root rule in the stylesheet');
 assert(panelRule, 'no .dsn-panel rule in the stylesheet');
 assert(!/flex-direction:\s*row-reverse/.test(rootRule), 'the root still lays the tab and the panel out as flex siblings');
 assert(/position:\s*absolute/.test(panelRule), 'the panel was not taken out of the tab layout');
-assert(/right:\s*calc\(100% \+ 10px\)/.test(panelRule), 'the panel does not hang to the left of the tab');
+assert(/left:\s*calc\(100% \+ 10px\)/.test(panelRule), 'the panel does not open to the right of the tab');
+assert(/left:\s*16px/.test(rootRule), 'the tab is not anchored to the left edge');
+const flipRule = (/\.dsn-root\.dsn-flip \.dsn-panel \{[^}]*\}/.exec(sheet) || [''])[0];
+assert(flipRule, 'no rule to flip the panel to the other side');
+assert(/right:\s*calc\(100% \+ 10px\)/.test(flipRule), 'the flipped panel does not hang to the left');
 assert(empty.face.inject.includes('slots'), 'inject does not list slots');
 assert(empty.registration?.options, 'nothing was registered');
 assert(empty.registration.options.name === 'shell.overlay', `registered into ${empty.registration.options.name}`);
@@ -860,6 +865,12 @@ const rePos = createRuntime(SEED);
 rePos.disk.set('dsh-sticky-notes:pos', '{"x":40,"y":50}');
 const rePosRoot = rePos.mount();
 assert(rePosRoot.props.style.left === '40px', `saved position not restored (${JSON.stringify(rePosRoot.props.style)})`);
+assert(!rePosRoot.props.className.includes('dsn-flip'), 'a tab near the left edge was flipped');
+
+// Dragged near the right edge, the panel must open leftwards instead of off-screen.
+const rightEdge = createRuntime(SEED);
+rightEdge.disk.set('dsh-sticky-notes:pos', '{"x":1000,"y":50}');
+assert(rootOf(rightEdge).props.className.includes('dsn-flip'), 'the panel still opens rightwards near the right edge');
 
 // A position saved on a bigger screen must not strand the tab off-screen.
 const offscreen = createRuntime(SEED);
