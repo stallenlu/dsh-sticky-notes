@@ -13,8 +13,11 @@ window.__ModuleLoader__.load({
     let MarkdownText = null;
     try {
       const primitives = require('@deepseek-ai/dsh-client-ui-primitives');
-      if (primitives && typeof primitives.MarkdownText === 'function') {
-        MarkdownText = primitives.MarkdownText;
+      // It is a `React.memo(...)` result, i.e. an object, not a function — testing
+      // for "function" here silently disabled every preview.
+      const candidate = primitives && primitives.MarkdownText;
+      if (typeof candidate === 'function' || (typeof candidate === 'object' && candidate !== null)) {
+        MarkdownText = candidate;
       }
     } catch {
       MarkdownText = null;
