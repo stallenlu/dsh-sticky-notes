@@ -50,7 +50,7 @@ window.__ModuleLoader__.load({
       .dsn-dragging .dsn-tab { cursor: grabbing; }
       .dsn-tab:hover { color: var(--dsw-alias-brand-primary); border-color: var(--dsw-alias-border-l2); }
       .dsn-badge { min-width: 16px; padding: 0 4px; border-radius: 8px; background: var(--dsw-alias-brand-primary); color: var(--dsw-alias-bg-base); font-size: 10px; line-height: 16px; text-align: center; }
-      .dsn-panel { position: absolute; top: 50%; transform: translateY(-50%); left: calc(100% + 10px); pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: 62vh; display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
+      .dsn-panel { position: absolute; top: 0; left: calc(100% + 10px); pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: calc(50vh - 12px); display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
       .dsn-head { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--dsw-alias-border-l1); background: var(--dsw-alias-bg-layer-2); }
       .dsn-title { flex: 1; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
       .dsn-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }

@@ -280,6 +280,8 @@ assert(panelRule, 'no .dsn-panel rule in the stylesheet');
 assert(!/flex-direction:\s*row-reverse/.test(rootRule), 'the root still lays the tab and the panel out as flex siblings');
 assert(/position:\s*absolute/.test(panelRule), 'the panel was not taken out of the tab layout');
 assert(/left:\s*calc\(100% \+ 10px\)/.test(panelRule), 'the panel does not open to the right of the tab');
+assert(/top:\s*0/.test(panelRule), 'the panel top is not aligned with the tab top');
+assert(!/translateY\(-50%\)/.test(panelRule), 'the panel is still vertically centred instead of aligned');
 assert(/left:\s*16px/.test(rootRule), 'the tab is not anchored to the left edge');
 const flipRule = (/\.dsn-root\.dsn-flip \.dsn-panel \{[^}]*\}/.exec(sheet) || [''])[0];
 assert(flipRule, 'no rule to flip the panel to the other side');
