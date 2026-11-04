@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Sticky notes">
+  <rect x="6" y="8" width="40" height="40" rx="6" fill="#f5c451" opacity="0.55" transform="rotate(-6 26 28)"/>
+  <rect x="18" y="16" width="40" height="40" rx="6" fill="#f7d774"/>
+  <path d="M42 56V44a2 2 0 0 1 2-2h14z" fill="#e0b447"/>
+  <g stroke="#8a6a12" stroke-width="3" stroke-linecap="round" opacity="0.75">
+    <path d="M26 28h24"/>
+    <path d="M26 36h24"/>
+    <path d="M26 44h14"/>
+  </g>
+</svg>
