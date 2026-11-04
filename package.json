@@ -1,10 +1,24 @@
 {
-  "name": "dsh-sticky-notes",
+  "name": "dsh-sticky-note-panel",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
   "license": "MIT",
   "description": "Sticky notes for the DSH Web UI: a draggable floating panel, a full page in the sidebar, Markdown preview, and settings.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stallenlu/dsh-sticky-notes.git"
+  },
+  "homepage": "https://github.com/stallenlu/dsh-sticky-notes#readme",
+  "bugs": {
+    "url": "https://github.com/stallenlu/dsh-sticky-notes/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "sticky-notes",
+    "plugin"
+  ],
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -22,6 +36,9 @@
     "README.md",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=22"
+  },
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
     "client": {
