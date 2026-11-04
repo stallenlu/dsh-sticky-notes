@@ -45,19 +45,21 @@ window.__ModuleLoader__.load({
     }
 
     const CSS = `
-      .dsn-root { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 2147482000; pointer-events: none; display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; max-height: calc(100vh - 32px); font-size: 13px; color: var(--dsw-alias-label-primary); }
+      .dsn-root { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 2147482000; pointer-events: none; font-size: 13px; color: var(--dsw-alias-label-primary); }
       .dsn-tab { pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 7px; border: 1px solid var(--dsw-alias-border-l1); border-radius: 10px; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-secondary); cursor: grab; box-shadow: 0 2px 10px rgba(0,0,0,.12); touch-action: none; user-select: none; }
       .dsn-dragging .dsn-tab { cursor: grabbing; }
       .dsn-tab:hover { color: var(--dsw-alias-brand-primary); border-color: var(--dsw-alias-border-l2); }
       .dsn-badge { min-width: 16px; padding: 0 4px; border-radius: 8px; background: var(--dsw-alias-brand-primary); color: var(--dsw-alias-bg-base); font-size: 10px; line-height: 16px; text-align: center; }
-      .dsn-panel { pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: 62vh; display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
+      .dsn-panel { position: absolute; top: 50%; transform: translateY(-50%); right: calc(100% + 10px); pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: 62vh; display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
       .dsn-head { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--dsw-alias-border-l1); background: var(--dsw-alias-bg-layer-2); }
       .dsn-title { flex: 1; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
       .dsn-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
       .dsn-note { background: var(--dsw-alias-bg-layer-2); border: 1px solid var(--dsw-alias-border-l1); border-radius: 9px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+      .dsn-note-head { display: flex; align-items: center; justify-content: flex-end; margin: -4px -4px -2px 0; }
+      .dsn-toggle { border: 1px solid var(--dsw-alias-border-l1); background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-secondary); border-radius: 6px; font: inherit; font-size: 10px; line-height: 14px; padding: 0 5px; cursor: pointer; }
+      .dsn-toggle:hover { color: var(--dsw-alias-brand-primary); border-color: var(--dsw-alias-border-l2); }
       .dsn-note textarea { width: 100%; box-sizing: border-box; resize: none; border: none; outline: none; background: transparent; color: inherit; font: inherit; line-height: 1.5; padding: 0; }
-      .dsn-preview { cursor: text; line-height: 1.55; min-height: 1.55em; overflow-wrap: anywhere; }
-      .dsn-preview:focus-visible { outline: 2px solid var(--dsw-alias-brand-primary); outline-offset: 2px; border-radius: 4px; }
+      .dsn-preview { line-height: 1.55; min-height: 1.55em; overflow-wrap: anywhere; }
       .dsn-preview > div > :first-child { margin-top: 0; }
       .dsn-preview > div > :last-child { margin-bottom: 0; }
       .dsn-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10px; color: var(--dsw-alias-label-secondary); }
@@ -112,8 +114,7 @@ window.__ModuleLoader__.load({
         sidebarLabel: 'Sidebar entry',
         sidebarHint: 'Show the notes icon in the left sidebar. The settings page below stays reachable either way.',
         markdownLabel: 'Markdown preview',
-        markdownHint: 'Render note text as Markdown. Click a note to edit it as plain text.',
-        editHint: 'Click to edit',
+        markdownHint: 'Show a Markdown / plain-text switch on each note. Turned off, every note is a plain text field.',
         badgeLabel: 'Count badge',
         badgeHint: 'Show how many notes you have on the floating tab.',
         widthLabel: 'Panel width',
@@ -127,6 +128,8 @@ window.__ModuleLoader__.load({
         countLabel: 'Notes',
         removeImage: 'Remove image',
         pasteHint: 'Paste an image into a note to attach it (up to 8).',
+        viewMarkdown: 'Markdown',
+        viewPlain: 'Plain text',
       },
       zh: {
         open: '便签',
@@ -147,8 +150,7 @@ window.__ModuleLoader__.load({
         sidebarLabel: '侧边栏入口',
         sidebarHint: '在左侧边栏显示便签图标。关掉后仍可从设置进入。',
         markdownLabel: 'Markdown 预览',
-        markdownHint: '把便签内容按 Markdown 渲染。点一下便签即可切回纯文本编辑。',
-        editHint: '点击编辑',
+        markdownHint: '在每张便签右上角显示 Markdown / 纯文本切换按钮。关掉后所有便签都是纯文本输入框。',
         badgeLabel: '计数徽章',
         badgeHint: '在浮动标签上显示便签数量。',
         widthLabel: '面板宽度',
@@ -162,6 +164,8 @@ window.__ModuleLoader__.load({
         countLabel: '便签数',
         removeImage: '移除图片',
         pasteHint: '在便签里粘贴图片即可附加（最多 8 张）。',
+        viewMarkdown: 'Markdown',
+        viewPlain: '纯文本',
       },
     };
 
@@ -492,7 +496,11 @@ window.__ModuleLoader__.load({
       // stays plain text so markdown syntax is editable rather than hidden.
       const [editing, setEditing] = useState(note.text === '');
       const lines = Math.min(12, Math.max(2, note.text.split('\n').length + Math.floor(note.text.length / 34)));
-      const rendered = preview && !editing && note.text.trim() !== '';
+      // The mode is switched by this card's own button, top right. Clicking the
+      // rendered text used to edit it, which made a stray click in the panel put
+      // a note into edit mode with no obvious way back.
+      const canPreview = preview && note.text.trim() !== '';
+      const rendered = canPreview && !editing;
       // Pasting is the whole point: an image on the clipboard becomes part of the
       // note without a file picker. Rejected items are skipped, never an error —
       // a clipboard often carries text alongside the image.
@@ -529,24 +537,26 @@ window.__ModuleLoader__.load({
       return h(
         'div',
         { className: 'dsn-note' },
-        rendered
+        canPreview
           ? h(
               'div',
-              {
-                className: 'dsn-preview',
-                role: 'button',
-                tabIndex: 0,
-                title: t.editHint,
-                onClick: () => setEditing(true),
-                onKeyDown: (event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    setEditing(true);
-                  }
+              { className: 'dsn-note-head' },
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'dsn-toggle',
+                  'aria-pressed': rendered,
+                  'aria-label': rendered ? t.viewPlain : t.viewMarkdown,
+                  title: rendered ? t.viewPlain : t.viewMarkdown,
+                  onClick: () => setEditing((current) => !current),
                 },
-              },
-              h(MarkdownText, { text: note.text, variant: 'compact' }),
+                rendered ? t.viewPlain : t.viewMarkdown,
+              ),
             )
+          : null,
+        rendered
+          ? h('div', { className: 'dsn-preview' }, h(MarkdownText, { text: note.text, variant: 'compact' }))
           : h('textarea', {
               value: note.text,
               rows: lines,
@@ -560,8 +570,9 @@ window.__ModuleLoader__.load({
                 // An empty note the user never wrote in is noise, not content, so
                 // it is discarded without claiming to be a deliberate delete.
                 // A pasted image counts as content even with no text yet.
+                // Blur does not switch modes: the button owns that, so leaving a
+                // note to click it cannot race the toggle.
                 if (note.text.trim() === '' && note.images.length === 0) onRemove(note.id, false);
-                else if (preview) setEditing(false);
               },
             }),
         gallery.length ? h('div', { className: 'dsn-gallery' }, gallery) : null,

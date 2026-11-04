@@ -267,6 +267,18 @@ assert(empty.styles[0].tag === 'style', `appended a <${empty.styles[0].tag}>`);
 assert(empty.styles[0].dataset.plugin === 'dsh-sticky-notes', `style tag belongs to ${empty.styles[0].dataset.plugin}`);
 assert(empty.styles[0].textContent.includes('--dsw-alias-'), 'stylesheet does not use theme tokens');
 assert(empty.styles[0].textContent.length > 1000, `stylesheet is only ${empty.styles[0].textContent.length} B`);
+
+// The tab must not move when the panel opens. The panel is taken out of flow and
+// hung to the left of the tab; as a flex sibling it widened the root, and the root
+// is anchored to the right edge, so opening it slid the tab away instead.
+const sheet = empty.styles[0].textContent;
+const rootRule = (/\.dsn-root \{[^}]*\}/.exec(sheet) || [''])[0];
+const panelRule = (/\.dsn-panel \{[^}]*\}/.exec(sheet) || [''])[0];
+assert(rootRule, 'no .dsn-root rule in the stylesheet');
+assert(panelRule, 'no .dsn-panel rule in the stylesheet');
+assert(!/flex-direction:\s*row-reverse/.test(rootRule), 'the root still lays the tab and the panel out as flex siblings');
+assert(/position:\s*absolute/.test(panelRule), 'the panel was not taken out of the tab layout');
+assert(/right:\s*calc\(100% \+ 10px\)/.test(panelRule), 'the panel does not hang to the left of the tab');
 assert(empty.face.inject.includes('slots'), 'inject does not list slots');
 assert(empty.registration?.options, 'nothing was registered');
 assert(empty.registration.options.name === 'shell.overlay', `registered into ${empty.registration.options.name}`);
@@ -709,12 +721,22 @@ assert(
   findAll(previewCard, (n) => n.props && n.props.className === 'md-stub').length === 1,
   'the preview did not go through MarkdownText',
 );
-previewCard.props.onClick();
+// The mode is switched by this card's own button, top right — clicking the
+// rendered text no longer edits it.
+const toggle = byClass(md.tree, 'dsn-toggle');
+assert(toggle, 'the per-note view switch is missing');
+assert(toggle.props['aria-pressed'] === true, 'the switch does not report the rendered state');
+toggle.props.onClick();
 const editing = textareas(md.tree);
-assert(editing.length === 1 && editing[0].props.value === SEED[0].text, 'clicking the preview did not open the textarea');
-// Blurring an edited note returns to the preview rather than staying in edit mode.
+assert(editing.length === 1 && editing[0].props.value === SEED[0].text, 'the switch did not open the textarea');
+assert(byClass(md.tree, 'dsn-toggle').props['aria-pressed'] === false, 'the switch did not flip to plain text');
+// Blur keeps the note in edit mode: the button owns the mode, so moving focus
+// away to reach it must not switch the view underneath the click.
 editing[0].props.onBlur();
-assert(byClass(md.tree, 'dsn-preview'), 'blurring a non-empty note did not return to the preview');
+assert(textareas(md.tree).length === 1, 'blur switched the view even though the button owns the mode');
+byClass(md.tree, 'dsn-toggle').props.onClick();
+assert(byClass(md.tree, 'dsn-preview'), 'the switch did not return to the rendered view');
+assert(byClass(md.tree, 'dsn-toggle').props['aria-pressed'] === true, 'the switch did not report the rendered state again');
 
 // The switch has to be able to turn it off, and then the textarea is the view.
 const mdOff = createRuntime(SEED, undefined, undefined, { markdown: true });
@@ -722,6 +744,8 @@ const mdSettings = findAll(mdOff.mount('settings.section'), (n) => n.props && n.
 mdSettings[2].props.onChange({ target: { checked: false } });
 mdOff.mount('main');
 assert(!byClass(mdOff.tree, 'dsn-preview'), 'markdown off still rendered a preview');
+// With markdown off there is nothing to switch, so the button must not appear.
+assert(!byClass(mdOff.tree, 'dsn-toggle'), 'markdown off still rendered the per-note view switch');
 const plainCard = textareas(mdOff.tree)[0];
 assert(plainCard && plainCard.props.value === SEED[0].text, 'markdown off should leave a plain textarea');
 
