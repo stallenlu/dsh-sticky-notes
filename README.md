@@ -5,7 +5,7 @@
 <!-- badges -->
 | | |
 | --- | --- |
-| **version** | `1.0.0` |
+| **version** | `1.0.2` |
 | **DSH** | `>= 0.2.0-rc.1`（在 0.2.1-rc.5 桌面版开发与实测） |
 | **license** | [MIT](LICENSE) |
 | **Node** | `>= 22`（仅运行冒烟测试需要） |
@@ -57,11 +57,11 @@ Copy or clone this package anywhere, then add it to a DSH profile, e.g. in `$DSH
 ```json
 {
   "dependencies": {
-    "dsh-sticky-notes": "link:C:/path/to/dsh-sticky-notes"
+    "dsh-sticky-note-panel": "link:C:/path/to/dsh-sticky-note-panel"
   },
   "dsh": {
     "profile": {
-      "bundles": ["dsh-sticky-notes"]
+      "bundles": ["dsh-sticky-note-panel"]
     }
   }
 }
@@ -146,11 +146,11 @@ Client-half slots: `shell.overlay` (floating tab + panel, order 900), `sidebar.p
 ```json
 {
   "dependencies": {
-    "dsh-sticky-notes": "link:C:/path/to/dsh-sticky-notes"
+    "dsh-sticky-note-panel": "link:C:/path/to/dsh-sticky-note-panel"
   },
   "dsh": {
     "profile": {
-      "bundles": ["dsh-sticky-notes"]
+      "bundles": ["dsh-sticky-note-panel"]
     }
   }
 }

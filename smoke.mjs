@@ -175,7 +175,7 @@ function createRuntime(seed, rawStorage, localeService, settings = { markdown: f
   );
 
   if (!bundle) throw new Error('client.js never called window.__ModuleLoader__.load');
-  if (bundle.id !== 'dsh-sticky-notes') throw new Error(`module id is ${bundle.id}`);
+  if (bundle.id !== 'dsh-sticky-note-panel') throw new Error(`module id is ${bundle.id}`);
 
   const face = bundle.factory(requireModule);
   let effectCalls = 0;

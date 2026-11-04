@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-  id: 'dsh-sticky-notes',
+  id: 'dsh-sticky-note-panel',
   factory(require) {
     const React = require('react');
     const h = React.createElement;

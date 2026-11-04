@@ -1,4 +1,4 @@
 # Insert the dual-face sticky-notes plugin into the DSH web profile roster.
 - insert:
     - id: ui-sticky-notes
-      name: 'dsh-sticky-notes'
+      name: 'dsh-sticky-note-panel'

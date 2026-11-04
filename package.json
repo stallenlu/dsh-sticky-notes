@@ -1,6 +1,6 @@
 {
   "name": "dsh-sticky-note-panel",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "license": "MIT",
   "description": "Sticky notes for the DSH Web UI: a draggable floating panel, a full page in the sidebar, Markdown preview, and settings.",
@@ -40,7 +40,9 @@
     "node": ">=22"
   },
   "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "platform": "web",
       "inject": []
