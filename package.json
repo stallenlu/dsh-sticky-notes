@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "license": "MIT",
   "description": "Sticky notes for the DSH Web UI: a draggable floating panel, a full page in the sidebar, Markdown preview, and settings.",
   "exports": {
     ".": "./index.js",
@@ -18,7 +19,8 @@
     "locale/*.json",
     "icon.svg",
     "package.json",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
