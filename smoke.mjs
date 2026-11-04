@@ -20,6 +20,7 @@ const SEED = [{ id: 'n1', text: 'buy milk\nand eggs', updatedAt: 1762312345000 }
 function createRuntime(seed, rawStorage, localeService, settings = { markdown: false }) {
   let bundle;
   let registration;
+  const MEMO = Symbol.for('react.memo');
   const styles = [];
   const store = new Map();
   const writes = [];
@@ -61,6 +62,11 @@ function createRuntime(seed, rawStorage, localeService, settings = { markdown: f
     if (node == null || typeof node === 'boolean') return null;
     if (Array.isArray(node)) return node.map((child, i) => render(child, `${path}/${i}`)).flat(Infinity);
     if (typeof node !== 'object') return node;
+    // React renders a memo object by calling its inner type, so unwrap it here
+    // too — otherwise the real memo export looks like a host element.
+    if (node.type && typeof node.type === 'object' && node.type.$$typeof === MEMO) {
+      return render({ ...node, type: node.type.type }, path);
+    }
     if (typeof node.type === 'function') {
       const self = `${path}/${node.type.name || 'anon'}`;
       stack.push({ path: self, cursor: 0 });
@@ -161,8 +167,12 @@ function createRuntime(seed, rawStorage, localeService, settings = { markdown: f
   // `MarkdownText` lives in the platform seed table, so a static bundle may
   // require it. The stub renders the raw text inside a marker span: enough to
   // prove the preview path is taken without reimplementing markdown here.
+  // It is a memo OBJECT, not a function, because that is what the real
+  // primitives export — testing for "function" is what silently killed the
+  // preview in 1.0.0.
+  const MarkdownStub = ({ text }) => React.createElement('span', { className: 'md-stub' }, text);
   const primitives = {
-    MarkdownText: ({ text }) => React.createElement('span', { className: 'md-stub' }, text),
+    MarkdownText: { $$typeof: MEMO, type: MarkdownStub, compare: null },
   };
   const requireModule = (id) => {
     if (id === 'react') return React;
@@ -971,3 +981,4 @@ assert(
 );
 
 console.log('images=ok');
+console.log('SMOKE OK: markdown preview, settings, images, storage and boot guards all pass');
