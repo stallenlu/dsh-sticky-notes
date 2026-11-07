@@ -6,14 +6,22 @@
 | | |
 | --- | --- |
 | **version** | `1.0.7` |
+| **npm** | [`dsh-sticky-note-panel@1.0.7`](https://www.npmjs.com/package/dsh-sticky-note-panel) |
+| **release** | [`v1.0.7`](https://github.com/stallenlu/dsh-sticky-notes/releases/tag/v1.0.7) · 预构建 tarball |
+| **dshmarket** | 目录 PR [awesome-dsh-plugin#12977](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12977)（审核中 / pending review） |
 | **DSH** | `>= 0.2.0-rc.1`（在 0.2.1-rc.5 桌面版开发与实测） |
 | **license** | [MIT](LICENSE) |
 | **Node** | `>= 22`（仅运行冒烟测试需要） |
+
+> 仓库名 `dsh-sticky-notes` · npm 包名 **`dsh-sticky-note-panel`**（安装 / 加依赖请用后者）。
+> The repo is named `dsh-sticky-notes`, but the published npm package is **`dsh-sticky-note-panel`** — use that name when installing or adding a dependency.
 
 <a id="english"></a>
 ## English
 
 **dsh-sticky-notes** is a sticky-notes plugin for [DeepSeek Harness](https://github.com/deepseek-ai) (DSH): a draggable floating panel beside the conversation, a full page in the sidebar, Markdown preview, image paste, and settings. All data lives in the browser's `localStorage`; there is no host-side logic.
+
+It ships as a prebuilt npm package (`dsh-sticky-note-panel@1.0.7`) and a version-pinned GitHub Release tarball, and has been submitted to the curated [awesome-dsh-plugin](https://awesome-dsh-plugin.com) catalog so it can be found and installed from dshmarket.
 
 ### Features
 
@@ -52,7 +60,25 @@ Image limits: at most 8 images per note, each ≤700KB (data URLs; worst case �
 
 ### Install
 
-Copy or clone this package anywhere, then add it to a DSH profile, e.g. in `$DSH_PROFILE_DIR/package.json`:
+The package is **prebuilt** — `client.js` ships as-is, so installs skip the `allowBuilds` build-approval step. Pick whichever channel suits you:
+
+**1 · One command (recommended)** — install the published npm package:
+
+```bash
+dsh plugin --profile web add dsh-sticky-note-panel
+```
+
+**2 · dshmarket** — the plugin has been submitted to the curated [awesome-dsh-plugin](https://awesome-dsh-plugin.com) catalog (category `ui`, PR [#12977](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12977)). While that review is pending, use method 1 or 3; once the PR is merged, it appears in dshmarket's **Discover** tab with one-click install. (The catalog is remote and curated — a local install cannot add an entry.)
+
+**3 · Version-pinned Release tarball** — the same prebuilt bytes, no npm required:
+
+```bash
+dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.7/dsh-sticky-note-panel-1.0.7.tgz"
+```
+
+> When both an npm package and a tarball are known, dshmarket prefers npm; the pinned Release tarball is a fallback and is also consumed by other storefronts (e.g. [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)). The `v1.0.7` tag is byte-identical to the published npm tarball (all 9 files match).
+
+**4 · From source (development)** — copy or clone this package and add it to a DSH profile, e.g. in `$DSH_PROFILE_DIR/package.json`:
 
 ```json
 {
@@ -104,6 +130,8 @@ Client-half slots: `shell.overlay` (floating tab + panel, order 900), `sidebar.p
 
 **dsh-sticky-notes** 是 [DeepSeek Harness](https://github.com/deepseek-ai)（DSH）的便签插件：对话旁一个可拖动的浮动便签窗，外加侧边栏完整页面、Markdown 预览、粘贴图片和设置项。数据全部存在浏览器 `localStorage`，无 Host 侧逻辑。
 
+已发布为预构建 npm 包（`dsh-sticky-note-panel@1.0.7`）与固定版本的 GitHub Release tarball，并已提交到 [awesome-dsh-plugin](https://awesome-dsh-plugin.com) 精选目录，以便通过 dshmarket 搜索与安装。
+
 ### 功能
 
 | 功能 | 说明 |
@@ -141,7 +169,25 @@ Client-half slots: `shell.overlay` (floating tab + panel, order 900), `sidebar.p
 
 ### 安装
 
-把本包克隆或复制到任意位置，然后加入 DSH profile，例如在 `$DSH_PROFILE_DIR/package.json`：
+本包是**预构建**的——`client.js` 随包发布，安装时跳过 `allowBuilds` 构建授权步骤。任选一种方式：
+
+**1 · 一条命令（推荐）**——安装已发布的 npm 包：
+
+```bash
+dsh plugin --profile web add dsh-sticky-note-panel
+```
+
+**2 · dshmarket**——插件已提交到 [awesome-dsh-plugin](https://awesome-dsh-plugin.com) 精选目录（`ui` 分类，PR [#12977](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12977)）。审核期间请先用方式 1 或 3；PR 合并后，它会出现在 dshmarket 的 **Discover** 标签页，可一键安装。（目录是远端精选，本地安装无法新增条目。）
+
+**3 · 固定版本 Release tarball**——同一份预构建内容，无需 npm：
+
+```bash
+dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.7/dsh-sticky-note-panel-1.0.7.tgz"
+```
+
+> 当 npm 包与 tarball 同时存在时，dshmarket 优先用 npm；固定版本的 Release tarball 作为兜底，同时供其它商店（如 [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)）使用。`v1.0.7` 标签与已发布的 npm tarball 逐字节一致（9 个文件全部匹配）。
+
+**4 · 源码安装（开发用）**——把本包克隆或复制到任意位置，然后加入 DSH profile，例如在 `$DSH_PROFILE_DIR/package.json`：
 
 ```json
 {
