@@ -78,12 +78,12 @@ dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/rele
 
 > When both an npm package and a tarball are known, dshmarket prefers npm; the pinned Release tarball is a fallback and is also consumed by other storefronts (e.g. [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)). The `v1.0.7` tag is byte-identical to the published npm tarball (all 9 files match).
 
-**4 · From source (development)** — copy or clone this package and add it to a DSH profile, e.g. in `$DSH_PROFILE_DIR/package.json`:
+**4 · Manual (profile.json)** — if you manage the profile by hand instead of the CLI, declare the official npm version directly in `$DSH_PROFILE_DIR/package.json`:
 
 ```json
 {
   "dependencies": {
-    "dsh-sticky-note-panel": "link:C:/path/to/dsh-sticky-note-panel"
+    "dsh-sticky-note-panel": "1.0.7"
   },
   "dsh": {
     "profile": {
@@ -93,7 +93,7 @@ dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/rele
 }
 ```
 
-The bundle's own `cordis.patch.yml` inserts the plugin row (`ui-sticky-notes`); no profile patch edit is needed. A `link:` dependency is a symlink, so code changes take effect after a page refresh; manifest changes (`package.json` / `cordis.patch.yml`) need a DSH restart.
+The bundle's own `cordis.patch.yml` inserts the plugin row (`ui-sticky-notes`); no profile patch edit is needed. This points at the published npm release (a copy under `node_modules`), so local source edits no longer apply — bump the version to pick up a newer release. Editing `package.json` / `cordis.patch.yml` needs a DSH restart.
 
 ### Development
 
@@ -187,12 +187,12 @@ dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/rele
 
 > 当 npm 包与 tarball 同时存在时，dshmarket 优先用 npm；固定版本的 Release tarball 作为兜底，同时供其它商店（如 [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)）使用。`v1.0.7` 标签与已发布的 npm tarball 逐字节一致（9 个文件全部匹配）。
 
-**4 · 源码安装（开发用）**——把本包克隆或复制到任意位置，然后加入 DSH profile，例如在 `$DSH_PROFILE_DIR/package.json`：
+**4 · 手动声明（profile.json）**——如果不走命令行、而是直接管理 profile，就在 `$DSH_PROFILE_DIR/package.json` 里声明官方 npm 版本：
 
 ```json
 {
   "dependencies": {
-    "dsh-sticky-note-panel": "link:C:/path/to/dsh-sticky-note-panel"
+    "dsh-sticky-note-panel": "1.0.7"
   },
   "dsh": {
     "profile": {
@@ -202,7 +202,7 @@ dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/rele
 }
 ```
 
-bundle 自带的 `cordis.patch.yml` 会插入插件行（`ui-sticky-notes`），无需改 profile 的 patch 文件。`link:` 依赖是符号链接，改代码刷新页面即生效；改 manifest（`package.json` / `cordis.patch.yml`）才需要重启 DSH。
+bundle 自带的 `cordis.patch.yml` 会插入插件行（`ui-sticky-notes`），无需改 profile 的 patch 文件。这里指向已发布的 npm 版本（`node_modules` 里是一份拷贝），本地源码改动不再生效——要升级就改版本号。改 `package.json` / `cordis.patch.yml` 需要重启 DSH。
 
 ### 开发
 
