@@ -93,7 +93,7 @@ dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/rele
 }
 ```
 
-The bundle's own `cordis.patch.yml` inserts the plugin row (`ui-sticky-notes`); no profile patch edit is needed. This points at the published npm release (a copy under `node_modules`), so local source edits no longer apply — bump the version to pick up a newer release. Editing `package.json` / `cordis.patch.yml` needs a DSH restart.
+The bundle's own `cordis.patch.yml` inserts the plugin row (`ui-sticky-notes`); no profile patch edit is needed. This points at the published npm release (a copy under `node_modules`), so local source edits no longer apply — bump the version to pick up a newer release. Editing `package.json` / `cordis.patch.yml` needs a DSH restart. Never use a `link:` (or `file:`) dependency pointing at a local clone here: once that folder is moved or deleted it leaves a dangling directory junction, and the next launch fails with `dsh: cannot resolve profile bundle "dsh-sticky-note-panel"`. To work on the source, edit a separate clone and publish a new npm version instead.
 
 ### Development
 
@@ -202,7 +202,7 @@ dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/rele
 }
 ```
 
-bundle 自带的 `cordis.patch.yml` 会插入插件行（`ui-sticky-notes`），无需改 profile 的 patch 文件。这里指向已发布的 npm 版本（`node_modules` 里是一份拷贝），本地源码改动不再生效——要升级就改版本号。改 `package.json` / `cordis.patch.yml` 需要重启 DSH。
+bundle 自带的 `cordis.patch.yml` 会插入插件行（`ui-sticky-notes`），无需改 profile 的 patch 文件。这里指向已发布的 npm 版本（`node_modules` 里是一份拷贝），本地源码改动不再生效——要升级就改版本号。改 `package.json` / `cordis.patch.yml` 需要重启 DSH。不要在这里用 `link:`（或 `file:`）依赖指向本地克隆目录：该目录一旦被移动或删除，就会留下悬空的目录 Junction，下次启动直接报 `dsh: cannot resolve profile bundle "dsh-sticky-note-panel"`。要改源码，请在独立克隆里修改并发布新的 npm 版本。
 
 ### 开发
 
