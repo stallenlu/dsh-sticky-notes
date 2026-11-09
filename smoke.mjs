@@ -159,7 +159,9 @@ function createRuntime(seed, rawStorage, localeService, settings = { markdown: f
   // file that was attached, without reimplementing base64 here.
   class StubFileReader {
     readAsDataURL(file) {
-      this.result = `data:${file.type};base64,STUB=${file.name}`;
+      // An optional realistic-length data URL lets the paste->reload round
+      // trip exercise the size cap without reimplementing base64 here.
+      this.result = file.dataUrl ?? `data:${file.type};base64,STUB=${file.name}`;
       queueMicrotask(() => this.onload());
     }
   }
@@ -790,6 +792,12 @@ widthPick.disk.set('dsh-sticky-notes:settings', '{"width":9999}');
 for (const fn of widthPick.window.listeners.get('storage') || []) fn({ key: 'dsh-sticky-notes:settings' });
 // The panel is still open; the tree getter flushes the re-render the reload caused.
 assert(byClass(widthPick.tree, 'dsn-panel').props.style.width === '560px', 'an absurd width was not clamped to 560');
+// Typing an absurd width must clamp immediately too, not only after a reload.
+widthPick.mount('settings.section');
+const widthLive = byClass(widthPick.tree, 'dsn-width');
+widthLive.props.onChange({ target: { value: '9999' } });
+void widthPick.tree;
+assert(byClass(widthPick.tree, 'dsn-width').props.value === 560, 'a typed absurd width was not clamped live');
 
 // Order is a list-level preference shared by the panel and the page.
 const ordered = createRuntime([
@@ -800,9 +808,11 @@ ordered.mount('main');
 const orderedCards = textareas(ordered.tree);
 assert(orderedCards[0].props.value === 'first', 'the newest-first default changed');
 ordered.mount('settings.section');
-const orderSelect = byClass(ordered.tree, 'dsn-select');
-assert(orderSelect && orderSelect.props.value === 'newest', 'the order select is missing or not newest-first');
-orderSelect.props.onChange({ target: { value: 'oldest' } });
+const orderSegments = findAll(ordered.tree, (n) => n.props?.className === 'dsn-seg');
+assert(orderSegments.length === 2, `the order control has ${orderSegments.length} options, want 2`);
+assert(orderSegments[0].props['aria-pressed'] === true, 'the newest-first option does not start selected');
+assert(!findAll(ordered.tree, (n) => n.type === 'select').length, 'a native <select> would ignore the dark theme');
+orderSegments[1].props.onClick();
 assert(
   JSON.parse(ordered.disk.get('dsh-sticky-notes:settings')).order === 'oldest',
   `order not persisted (${ordered.disk.get('dsh-sticky-notes:settings')})`,
@@ -931,10 +941,10 @@ const pasteInto = async (runtime, textArea, items) => {
   await Promise.resolve();
   void runtime.tree;
 };
-const fileItem = (type, name, size) => ({
+const fileItem = (type, name, size, dataUrl) => ({
   kind: 'file',
   type,
-  getAsFile: () => ({ type, name, size }),
+  getAsFile: () => ({ type, name, size, dataUrl }),
 });
 const textItem = (text) => ({ kind: 'string', type: 'text/plain', getAsFile: () => null });
 
@@ -986,6 +996,38 @@ await pasteInto(big, textareas(big.tree)[0], [fileItem('image/png', 'huge', 700 
 assert(
   !(big.disk.get('dsh-sticky-notes:v1') || '').includes('huge'),
   'an oversized image was stored anyway',
+);
+
+// P0 regression: a pasted image must survive a reload. The cap used to be
+// measured in file bytes on paste but in data-URL characters on read, so a
+// mid-size image was written and then silently dropped on the next load.
+const midSize = 600 * 1024;
+const midUrl = 'data:image/png;base64,' + 'x'.repeat(Math.ceil(midSize / 3) * 4);
+const midPaste = createRuntime(null);
+midPaste.mount();
+byClass(midPaste.tree, 'dsn-tab').props.onClick();
+button(midPaste.tree, '新建便签').props.onClick();
+await pasteInto(midPaste, textareas(midPaste.tree)[0], [fileItem('image/png', 'mid', midSize, midUrl)]);
+assert(
+  !(midPaste.disk.get('dsh-sticky-notes:v1') || '').includes(midUrl),
+  'an image whose data URL exceeds the cap was pasted and would be lost on reload',
+);
+
+// An in-cap image is stored AND comes back after a reload.
+const okUrl = 'data:image/png;base64,' + 'x'.repeat(500 * 1024);
+const okPaste = createRuntime(null);
+okPaste.mount();
+byClass(okPaste.tree, 'dsn-tab').props.onClick();
+button(okPaste.tree, '新建便签').props.onClick();
+await pasteInto(okPaste, textareas(okPaste.tree)[0], [fileItem('image/png', 'ok', 300 * 1024, okUrl)]);
+const okStored = JSON.parse(okPaste.disk.get('dsh-sticky-notes:v1') || '[]');
+assert(okStored[0]?.images?.length === 1, 'an in-cap image was not stored');
+const okReload = createRuntime(null, okPaste.disk.get('dsh-sticky-notes:v1'));
+okReload.mount();
+byClass(okReload.tree, 'dsn-tab').props.onClick();
+assert(
+  findAll(okReload.tree, (n) => n.type === 'img').length === 1,
+  'an in-cap image was silently dropped on reload (paste/read cap mismatch)',
 );
 
 // Hostile stored data: a non-image or absurd "data URL" is cleaned on read and

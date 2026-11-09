@@ -5,9 +5,9 @@
 <!-- badges -->
 | | |
 | --- | --- |
-| **version** | `1.0.7` |
-| **npm** | [`dsh-sticky-note-panel@1.0.7`](https://www.npmjs.com/package/dsh-sticky-note-panel) |
-| **release** | [`v1.0.7`](https://github.com/stallenlu/dsh-sticky-notes/releases/tag/v1.0.7) · 预构建 tarball |
+| **version** | `1.0.8` |
+| **npm** | [`dsh-sticky-note-panel@1.0.8`](https://www.npmjs.com/package/dsh-sticky-note-panel) |
+| **release** | [`v1.0.8`](https://github.com/stallenlu/dsh-sticky-notes/releases/tag/v1.0.8) · 预构建 tarball |
 | **dshmarket** | 目录 PR [awesome-dsh-plugin#12977](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12977)（审核中 / pending review） |
 | **DSH** | `>= 0.2.0-rc.1`（在 0.2.1-rc.5 桌面版开发与实测） |
 | **license** | [MIT](LICENSE) |
@@ -21,7 +21,7 @@
 
 **dsh-sticky-notes** is a sticky-notes plugin for [DeepSeek Harness](https://github.com/deepseek-ai) (DSH): a draggable floating panel beside the conversation, a full page in the sidebar, Markdown preview, image paste, and settings. All data lives in the browser's `localStorage`; there is no host-side logic.
 
-It ships as a prebuilt npm package (`dsh-sticky-note-panel@1.0.7`) and a version-pinned GitHub Release tarball, and has been submitted to the curated [awesome-dsh-plugin](https://awesome-dsh-plugin.com) catalog so it can be found and installed from dshmarket.
+It ships as a prebuilt npm package (`dsh-sticky-note-panel@1.0.8`) and a version-pinned GitHub Release tarball, and has been submitted to the curated [awesome-dsh-plugin](https://awesome-dsh-plugin.com) catalog so it can be found and installed from dshmarket.
 
 ### Features
 
@@ -56,7 +56,7 @@ It ships as a prebuilt npm package (`dsh-sticky-note-panel@1.0.7`) and a version
 | `dsh-sticky-notes:settings` | Settings |
 | `dsh-sticky-notes:pos` | Floating-panel position |
 
-Image limits: at most 8 images per note, each ≤700KB (data URLs; worst case ≈5.6MB per note). On read, values that are not `data:image/` are dropped and the list is capped at 8. Data does not sync across devices.
+Image limits: at most 8 images per note, each capped at 700K characters as a data URL (≈525KB source file, since base64 expands 4/3); worst case ≈5.6MB per note. Paste and read use the same cap, so a pasted image always survives a reload. On read, values that are not `data:image/` are dropped and the list is capped at 8. Data does not sync across devices.
 
 ### Install
 
@@ -73,17 +73,17 @@ dsh plugin --profile web add dsh-sticky-note-panel
 **3 · Version-pinned Release tarball** — the same prebuilt bytes, no npm required:
 
 ```bash
-dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.7/dsh-sticky-note-panel-1.0.7.tgz"
+dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.8/dsh-sticky-note-panel-1.0.8.tgz"
 ```
 
-> When both an npm package and a tarball are known, dshmarket prefers npm; the pinned Release tarball is a fallback and is also consumed by other storefronts (e.g. [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)). The `v1.0.7` tag is byte-identical to the published npm tarball (all 9 files match).
+> When both an npm package and a tarball are known, dshmarket prefers npm; the pinned Release tarball is a fallback and is also consumed by other storefronts (e.g. [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)). The `v1.0.8` tag is byte-identical to the published npm tarball (all 9 files match).
 
 **4 · Manual (profile.json)** — if you manage the profile by hand instead of the CLI, declare the official npm version directly in `$DSH_PROFILE_DIR/package.json`:
 
 ```json
 {
   "dependencies": {
-    "dsh-sticky-note-panel": "1.0.7"
+    "dsh-sticky-note-panel": "1.0.8"
   },
   "dsh": {
     "profile": {
@@ -130,7 +130,7 @@ Client-half slots: `shell.overlay` (floating tab + panel, order 900), `sidebar.p
 
 **dsh-sticky-notes** 是 [DeepSeek Harness](https://github.com/deepseek-ai)（DSH）的便签插件：对话旁一个可拖动的浮动便签窗，外加侧边栏完整页面、Markdown 预览、粘贴图片和设置项。数据全部存在浏览器 `localStorage`，无 Host 侧逻辑。
 
-已发布为预构建 npm 包（`dsh-sticky-note-panel@1.0.7`）与固定版本的 GitHub Release tarball，并已提交到 [awesome-dsh-plugin](https://awesome-dsh-plugin.com) 精选目录，以便通过 dshmarket 搜索与安装。
+已发布为预构建 npm 包（`dsh-sticky-note-panel@1.0.8`）与固定版本的 GitHub Release tarball，并已提交到 [awesome-dsh-plugin](https://awesome-dsh-plugin.com) 精选目录，以便通过 dshmarket 搜索与安装。
 
 ### 功能
 
@@ -165,7 +165,7 @@ Client-half slots: `shell.overlay` (floating tab + panel, order 900), `sidebar.p
 | `dsh-sticky-notes:settings` | 设置项 |
 | `dsh-sticky-notes:pos` | 浮窗位置 |
 
-图片限制：每条便签最多 8 张，单张 ≤700KB（data URL，最坏总量约 5.6MB）；读取时清洗非 `data:image/` 的值并截断到 8 张。数据不跨设备同步。
+图片限制：每条便签最多 8 张，单张 data URL 上限 700K 字符（约合 525KB 源文件，base64 会膨胀 4/3），最坏总量约 5.6MB；粘贴与读取用同一上限，粘贴的图片重载后不会丢失。读取时清洗非 `data:image/` 的值并截断到 8 张。数据不跨设备同步。
 
 ### 安装
 
@@ -182,17 +182,17 @@ dsh plugin --profile web add dsh-sticky-note-panel
 **3 · 固定版本 Release tarball**——同一份预构建内容，无需 npm：
 
 ```bash
-dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.7/dsh-sticky-note-panel-1.0.7.tgz"
+dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.8/dsh-sticky-note-panel-1.0.8.tgz"
 ```
 
-> 当 npm 包与 tarball 同时存在时，dshmarket 优先用 npm；固定版本的 Release tarball 作为兜底，同时供其它商店（如 [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)）使用。`v1.0.7` 标签与已发布的 npm tarball 逐字节一致（9 个文件全部匹配）。
+> 当 npm 包与 tarball 同时存在时，dshmarket 优先用 npm；固定版本的 Release tarball 作为兜底，同时供其它商店（如 [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)）使用。`v1.0.8` 标签与已发布的 npm tarball 逐字节一致（9 个文件全部匹配）。
 
 **4 · 手动声明（profile.json）**——如果不走命令行、而是直接管理 profile，就在 `$DSH_PROFILE_DIR/package.json` 里声明官方 npm 版本：
 
 ```json
 {
   "dependencies": {
-    "dsh-sticky-note-panel": "1.0.7"
+    "dsh-sticky-note-panel": "1.0.8"
   },
   "dsh": {
     "profile": {

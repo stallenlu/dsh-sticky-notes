@@ -29,7 +29,14 @@ window.__ModuleLoader__.load({
     // one is capped: 8 images × ~700 KB of data URL ≈ 5.6 MB worst case, and the
     // quota failure already surfaces as the "storage unavailable" warning.
     const MAX_IMAGES = 8;
+    // The cap is on the stored data URL (a string), not on the source file.
+    // Base64 expands a file by 4/3, so measuring the file in bytes let a
+    // ~525-700 KB image pass the paste guard while its data URL was rejected
+    // by the read filter: pasted, saved, then silently lost on the next load.
+    // Both guards now use the same unit (data URL characters).
     const MAX_IMAGE_DATA = 700 * 1024;
+    // Headroom for the data: prefix and longer image subtypes.
+    const MAX_DATA_PREFIX = 64;
 
     // A boot-time client half runs as a static bundle: its factory only receives
     // `require`. `styles`/`host` are dynamic-runner parameters and are undefined
@@ -87,7 +94,11 @@ window.__ModuleLoader__.load({
       .dsn-settings-hint { font-size: 11px; line-height: 1.5; color: var(--dsw-alias-label-secondary); }
       .dsn-check { width: 16px; height: 16px; accent-color: var(--dsw-alias-brand-primary); cursor: pointer; }
       .dsn-width { width: 72px; box-sizing: border-box; border: 1px solid var(--dsw-alias-border-l1); border-radius: 7px; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-primary); font: inherit; font-size: 12px; padding: 3px 6px; }
-      .dsn-select { border: 1px solid var(--dsw-alias-border-l1); border-radius: 7px; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-primary); font: inherit; font-size: 12px; padding: 3px 6px; cursor: pointer; }
+      .dsn-segment { display: inline-flex; border: 1px solid var(--dsw-alias-border-l1); border-radius: 7px; overflow: hidden; }
+      .dsn-seg { border: none; border-radius: 0; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-secondary); font: inherit; font-size: 11px; padding: 3px 9px; cursor: pointer; }
+      .dsn-seg + .dsn-seg { border-left: 1px solid var(--dsw-alias-border-l1); }
+      .dsn-seg:hover { color: var(--dsw-alias-label-primary); }
+      .dsn-seg[aria-pressed="true"] { background: var(--dsw-alias-brand-primary); color: var(--dsw-alias-bg-base); }
       .dsn-gallery { display: flex; flex-wrap: wrap; gap: 6px; }
       .dsn-img { position: relative; display: inline-block; }
       .dsn-img img { display: block; max-width: 100%; max-height: 120px; border-radius: 6px; border: 1px solid var(--dsw-alias-border-l1); }
@@ -379,6 +390,9 @@ window.__ModuleLoader__.load({
         },
         set(patch) {
           state = { ...state, ...patch };
+          // readSettings clamps stale disk values; clamp the live path too, or
+          // typing 9999 into the width field blows the panel up until reload.
+          if (Number.isFinite(state.width)) state.width = Math.min(560, Math.max(240, Math.round(state.width)));
           try {
             window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(state));
           } catch {
@@ -514,10 +528,16 @@ window.__ModuleLoader__.load({
         if (!files.length) return;
         event.preventDefault();
         for (const file of files) {
-          if (file.size > MAX_IMAGE_DATA) continue;
+          // Reject before decoding when the expanded data URL cannot fit: the
+          // read filter measures that string, so this guard must too.
+          if (Math.ceil(file.size / 3) * 4 + MAX_DATA_PREFIX > MAX_IMAGE_DATA) continue;
           const reader = new FileReader();
           reader.onload = () => {
-            if (typeof reader.result === 'string' && reader.result.startsWith('data:image/')) onAttach(note.id, reader.result);
+            if (
+              typeof reader.result === 'string'
+              && reader.result.startsWith('data:image/')
+              && reader.result.length <= MAX_IMAGE_DATA
+            ) onAttach(note.id, reader.result);
           };
           reader.readAsDataURL(file);
         }
@@ -980,15 +1000,24 @@ window.__ModuleLoader__.load({
             h('div', { className: 'dsn-settings-hint' }, t.orderHint),
           ),
           h(
-            'select',
-            {
-              className: 'dsn-select',
-              value: settings.order,
-              'aria-label': t.orderLabel,
-              onChange: (event) => settingsStore.set({ order: event.target.value }),
-            },
-            h('option', { value: 'newest' }, t.orderNewest),
-            h('option', { value: 'oldest' }, t.orderOldest),
+            'div',
+            { className: 'dsn-segment', role: 'group', 'aria-label': t.orderLabel },
+            ...[
+              ['newest', t.orderNewest],
+              ['oldest', t.orderOldest],
+            ].map(([value, label]) =>
+              h(
+                'button',
+                {
+                  key: value,
+                  type: 'button',
+                  className: 'dsn-seg',
+                  'aria-pressed': settings.order === value,
+                  onClick: () => settingsStore.set({ order: value }),
+                },
+                label,
+              ),
+            ),
           ),
         ),
         h(
