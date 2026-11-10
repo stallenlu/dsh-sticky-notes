@@ -149,6 +149,7 @@ function createRuntime(seed, rawStorage, localeService, settings = { markdown: f
   const document = {
     head: { appendChild: (el) => { styles.push(el); } },
     createElement: (tag) => ({ tag, dataset: {}, textContent: '', parentNode: null }),
+    querySelector: () => null, // injectBaseline() probes for an existing style[data-dsb]
     listeners: new Map(),
     addEventListener: (type, fn) => { document.listeners.set(type, fn); },
     removeEventListener: (type) => { document.listeners.delete(type); },
@@ -264,17 +265,24 @@ const textareas = (node) => findAll(node, (n) => n.type === 'textarea');
 // --- apply() wiring -------------------------------------------------------
 const empty = createRuntime(null);
 assert(empty.effectCalls === 1, `ctx.effect ran ${empty.effectCalls} times`);
-assert(empty.styles.length === 1, `style elements appended ${empty.styles.length} times`);
-assert(empty.styles[0].tag === 'style', `appended a <${empty.styles[0].tag}>`);
-assert(empty.styles[0].dataset.plugin === 'dsh-sticky-notes', `style tag belongs to ${empty.styles[0].dataset.plugin}`);
-assert(empty.styles[0].textContent.includes('--dsw-alias-'), 'stylesheet does not use theme tokens');
-assert(empty.styles[0].textContent.length > 1000, `stylesheet is only ${empty.styles[0].textContent.length} B`);
+assert(empty.styles.length === 2, `style elements appended ${empty.styles.length} times`);
+// The house baseline (style[data-dsb]) is injected first, then this plugin's
+// own sheet. Locate both by owner instead of by index.
+const baselineStyle = empty.styles.find((el) => el.dataset.dsb);
+const pluginStyle = empty.styles.find((el) => el.dataset.plugin === 'dsh-sticky-notes');
+assert(baselineStyle && baselineStyle.tag === 'style', 'house baseline <style> was not injected');
+assert(baselineStyle.textContent.includes('--dsb-accent-'), 'baseline sheet does not define the house accents');
+assert(empty.styles.indexOf(baselineStyle) < empty.styles.indexOf(pluginStyle), 'baseline must precede the plugin sheet');
+assert(pluginStyle && pluginStyle.tag === 'style', `appended a <${pluginStyle && pluginStyle.tag}>`);
+assert(pluginStyle.textContent.includes('--dsw-alias-'), 'stylesheet does not use theme tokens');
+assert(pluginStyle.textContent.includes('--dsb-accent-'), 'stylesheet does not use the house accents');
+assert(pluginStyle.textContent.length > 1000, `stylesheet is only ${pluginStyle.textContent.length} B`);
 
 // The tab must not move when the panel opens. The panel is taken out of flow and
 // hung beside the tab; as a flex sibling it widened the root, and the root is
 // edge-anchored, so opening it slid the tab away instead. It sits on the left
 // edge and opens rightwards, flipping only when that would leave the screen.
-const sheet = empty.styles[0].textContent;
+const sheet = pluginStyle.textContent;
 const rootRule = (/\.dsn-root \{[^}]*\}/.exec(sheet) || [''])[0];
 const panelRule = (/\.dsn-panel \{[^}]*\}/.exec(sheet) || [''])[0];
 assert(rootRule, 'no .dsn-root rule in the stylesheet');
@@ -296,7 +304,8 @@ assert(empty.registration.options.order === 900, `registered at order ${empty.re
 
 // --- closed state, no notes ----------------------------------------------
 const closed = empty.mount();
-assert(closed.props.className === 'dsn-root', 'root element is not .dsn-root');
+assert(String(closed.props.className).split(' ').includes('dsn-root'), 'root element is not .dsn-root');
+assert(String(closed.props.className).split(' ').includes('dsb-root'), 'root element lacks the baseline .dsb-root mapping');
 assert(byClass(closed, 'dsn-tab'), 'tab missing');
 assert(!byClass(closed, 'dsn-panel'), 'panel rendered while closed');
 assert(!byClass(closed, 'dsn-badge'), 'badge rendered with no notes');
@@ -678,7 +687,8 @@ assert(typeof settings.options.label === 'function', 'settings label is not a th
 
 // The page and the panel are two views of one list, not two lists.
 const pageTree = surfaces.mount('main');
-assert(byClass(pageTree, 'dsn-page'), 'page root is not .dsn-page');
+assert(findAll(pageTree, (n) => String(n.props?.className || '').split(' ').includes('dsn-page'))[0], 'page root is not .dsn-page');
+assert(findAll(pageTree, (n) => String(n.props?.className || '').split(' ').includes('dsb-root'))[0], 'page root lacks the baseline .dsb-root mapping');
 const pageAreas = textareas(pageTree);
 assert(pageAreas.length === 1 && pageAreas[0].props.value === SEED[0].text, `page shows ${JSON.stringify(pageAreas.map((t) => t.props.value))}`);
 assert(byClass(pageTree, 'dsn-page-sub').props.children.join('').includes('1'), 'page count is wrong');
