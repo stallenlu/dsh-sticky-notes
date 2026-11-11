@@ -97,12 +97,15 @@ window.__ModuleLoader__.load({
       };
     }
 
+    // Accent: the baseline blue (--dsb-accent-speed / #3b82f6), matching
+    // DSH's own selected/active blue. Violet (--dsb-accent-intelligence)
+    // was the original choice; the blue has better white-on-colour contrast.
     const CSS = `
       .dsn-root { position: fixed; left: 16px; top: 50%; transform: translateY(-50%); z-index: 2147482000; pointer-events: none; font-size: 13px; color: var(--dsw-alias-label-primary, #0f1115); }
       .dsn-tab { pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 7px; border: 1px solid var(--dsw-alias-border-l1, #0000000a); border-radius: 10px; background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-secondary, #61666b); cursor: grab; box-shadow: 0 2px 10px rgba(0,0,0,.12); touch-action: none; user-select: none; }
       .dsn-dragging .dsn-tab { cursor: grabbing; }
-      .dsn-tab:hover { color: var(--dsb-accent-intelligence, #a855f7); border-color: var(--dsw-alias-border-l2, #0000001a); }
-      .dsn-badge { min-width: 16px; padding: 0 4px; border-radius: 8px; background: var(--dsb-accent-intelligence, #a855f7); color: var(--dsw-alias-bg-base, #ffffff); font-size: 10px; line-height: 16px; text-align: center; }
+      .dsn-tab:hover { color: var(--dsb-accent-speed, #3b82f6); border-color: var(--dsw-alias-border-l2, #0000001a); }
+      .dsn-badge { min-width: 16px; padding: 0 4px; border-radius: 8px; background: var(--dsb-accent-speed, #3b82f6); color: var(--dsw-alias-bg-base, #ffffff); font-size: 10px; line-height: 16px; text-align: center; }
       .dsn-panel { position: absolute; top: 0; left: calc(100% + 10px); pointer-events: auto; width: 320px; max-width: calc(100vw - 48px); max-height: calc(50vh - 12px); display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-1, #ffffff); border: 1px solid var(--dsw-alias-border-l1, #0000000a); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.18); overflow: hidden; }
       .dsn-head { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--dsw-alias-border-l1, #0000000a); background: var(--dsw-alias-bg-layer-2, #fafafa); }
       .dsn-title { flex: 1; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
@@ -111,7 +114,7 @@ window.__ModuleLoader__.load({
       .dsn-note { background: var(--dsw-alias-bg-layer-2, #fafafa); border: 1px solid var(--dsw-alias-border-l1, #0000000a); border-radius: 9px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
       .dsn-note-head { display: flex; align-items: center; justify-content: flex-end; margin: -4px -4px -2px 0; }
       .dsn-toggle { border: 1px solid var(--dsw-alias-border-l1, #0000000a); background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-secondary, #61666b); border-radius: 6px; font: inherit; font-size: 10px; line-height: 14px; padding: 0 5px; cursor: pointer; }
-      .dsn-toggle:hover { color: var(--dsb-accent-intelligence, #a855f7); border-color: var(--dsw-alias-border-l2, #0000001a); }
+      .dsn-toggle:hover { color: var(--dsb-accent-speed, #3b82f6); border-color: var(--dsw-alias-border-l2, #0000001a); }
       .dsn-note textarea { width: 100%; box-sizing: border-box; resize: none; border: none; outline: none; background: transparent; color: inherit; font: inherit; line-height: 1.5; padding: 0; }
       .dsn-preview { line-height: 1.55; min-height: 1.55em; overflow-wrap: anywhere; }
       .dsn-preview > div > :first-child { margin-top: 0; }
@@ -130,7 +133,7 @@ window.__ModuleLoader__.load({
       .dsn-page-sub { margin: 2px 0 0; font-size: 11px; color: var(--dsw-alias-label-secondary, #61666b); }
       .dsn-page-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px; }
       .dsn-page-body .dsn-list { overflow: visible; padding: 0; }
-      .dsn-btn-primary { background: var(--dsb-accent-intelligence, #a855f7); border-color: var(--dsb-accent-intelligence, #a855f7); color: var(--dsw-alias-bg-base, #ffffff); }
+      .dsn-btn-primary { background: var(--dsb-accent-speed, #3b82f6); border-color: var(--dsb-accent-speed, #3b82f6); color: var(--dsw-alias-bg-base, #ffffff); }
       .dsn-btn-primary:hover { color: var(--dsw-alias-bg-base, #ffffff); opacity: .9; }
       .dsn-btn[disabled] { opacity: .45; cursor: default; }
       .dsn-settings { display: flex; flex-direction: column; gap: 4px; padding: 4px 0; color: var(--dsw-alias-label-primary, #0f1115); font-size: 13px; }
@@ -138,13 +141,13 @@ window.__ModuleLoader__.load({
       .dsn-settings-text { display: flex; flex-direction: column; gap: 3px; }
       .dsn-settings-label { font-weight: 500; }
       .dsn-settings-hint { font-size: 11px; line-height: 1.5; color: var(--dsw-alias-label-secondary, #61666b); }
-      .dsn-check { width: 16px; height: 16px; accent-color: var(--dsb-accent-intelligence, #a855f7); cursor: pointer; }
+      .dsn-check { width: 16px; height: 16px; accent-color: var(--dsb-accent-speed, #3b82f6); cursor: pointer; }
       .dsn-width { width: 72px; box-sizing: border-box; border: 1px solid var(--dsw-alias-border-l1, #0000000a); border-radius: 7px; background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-primary, #0f1115); font: inherit; font-size: 12px; padding: 3px 6px; }
       .dsn-segment { display: inline-flex; border: 1px solid var(--dsw-alias-border-l1, #0000000a); border-radius: 7px; overflow: hidden; }
       .dsn-seg { border: none; border-radius: 0; background: var(--dsw-alias-bg-layer-1, #ffffff); color: var(--dsw-alias-label-secondary, #61666b); font: inherit; font-size: 11px; padding: 3px 9px; cursor: pointer; }
       .dsn-seg + .dsn-seg { border-left: 1px solid var(--dsw-alias-border-l1, #0000000a); }
       .dsn-seg:hover { color: var(--dsw-alias-label-primary, #0f1115); }
-      .dsn-seg[aria-pressed="true"] { background: var(--dsb-accent-intelligence, #a855f7); color: var(--dsw-alias-bg-base, #ffffff); }
+      .dsn-seg[aria-pressed="true"] { background: var(--dsb-accent-speed, #3b82f6); color: var(--dsw-alias-bg-base, #ffffff); }
       .dsn-gallery { display: flex; flex-wrap: wrap; gap: 6px; }
       .dsn-img { position: relative; display: inline-block; }
       .dsn-img img { display: block; max-width: 100%; max-height: 120px; border-radius: 6px; border: 1px solid var(--dsw-alias-border-l1, #0000000a); }
