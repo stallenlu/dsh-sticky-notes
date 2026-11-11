@@ -277,6 +277,10 @@ assert(pluginStyle && pluginStyle.tag === 'style', `appended a <${pluginStyle &&
 assert(pluginStyle.textContent.includes('--dsw-alias-'), 'stylesheet does not use theme tokens');
 assert(pluginStyle.textContent.includes('--dsb-accent-'), 'stylesheet does not use the house accents');
 assert(pluginStyle.textContent.length > 1000, `stylesheet is only ${pluginStyle.textContent.length} B`);
+// DSH's own UI stays neutral: selection is an inverted contrast, not a colour.
+assert(pluginStyle.textContent.includes('--dsb-inverted-bg'), 'stylesheet is missing the neutral inverted background');
+assert(pluginStyle.textContent.includes('--dsb-inverted-fg'), 'stylesheet is missing the neutral inverted foreground');
+assert(!pluginStyle.textContent.includes('--dsb-accent-speed'), 'stylesheet still paints the blue accent on selection');
 
 // The tab must not move when the panel opens. The panel is taken out of flow and
 // hung beside the tab; as a flex sibling it widened the root, and the root is

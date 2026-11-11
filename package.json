@@ -1,6 +1,6 @@
 {
   "name": "dsh-sticky-note-panel",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "module",
   "license": "MIT",
   "description": "Sticky notes for the DSH Web UI: a draggable floating panel, a full page in the sidebar, Markdown preview, and settings.",

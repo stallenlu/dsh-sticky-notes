@@ -5,9 +5,9 @@
 <!-- badges -->
 | | |
 | --- | --- |
-| **version** | `1.0.10` |
-| **npm** | [`dsh-sticky-note-panel@1.0.10`](https://www.npmjs.com/package/dsh-sticky-note-panel) |
-| **release** | [`v1.0.10`](https://github.com/stallenlu/dsh-sticky-notes/releases/tag/v1.0.10) · 预构建 tarball |
+| **version** | `1.0.11` |
+| **npm** | [`dsh-sticky-note-panel@1.0.11`](https://www.npmjs.com/package/dsh-sticky-note-panel) |
+| **release** | [`v1.0.11`](https://github.com/stallenlu/dsh-sticky-notes/releases/tag/v1.0.11) · 预构建 tarball |
 | **dshmarket** | 目录条目已收录 · PR [awesome-dsh-plugin#12977](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12977)（2026-11-08 合并 / merged） |
 | **DSH** | `>= 0.2.0-rc.1`（在 0.2.1-rc.5 桌面版开发与实测） |
 | **license** | [MIT](LICENSE) |
@@ -21,7 +21,7 @@
 
 **dsh-sticky-notes** is a sticky-notes plugin for [DeepSeek Harness](https://github.com/deepseek-ai) (DSH): a draggable floating panel beside the conversation, a full page in the sidebar, Markdown preview, image paste, and settings. All data lives in the browser's `localStorage`; there is no host-side logic.
 
-It ships as a prebuilt npm package (`dsh-sticky-note-panel@1.0.10`) and a version-pinned GitHub Release tarball, and is listed in the curated [awesome-dsh-plugin](https://awesome-dsh-plugin.com) catalog, so it can be found and installed from dshmarket.
+It ships as a prebuilt npm package (`dsh-sticky-note-panel@1.0.11`) and a version-pinned GitHub Release tarball, and is listed in the curated [awesome-dsh-plugin](https://awesome-dsh-plugin.com) catalog, so it can be found and installed from dshmarket.
 
 ### Features
 
@@ -73,17 +73,17 @@ dsh plugin --profile web add dsh-sticky-note-panel
 **3 · Version-pinned Release tarball** — the same prebuilt bytes, no npm required:
 
 ```bash
-dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.10/dsh-sticky-note-panel-1.0.10.tgz"
+dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.11/dsh-sticky-note-panel-1.0.11.tgz"
 ```
 
-> When both an npm package and a tarball are known, dshmarket prefers npm; the pinned Release tarball is a fallback and is also consumed by other storefronts (e.g. [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)). The `v1.0.10` tag is byte-identical to the published npm tarball (all 9 files match).
+> When both an npm package and a tarball are known, dshmarket prefers npm; the pinned Release tarball is a fallback and is also consumed by other storefronts (e.g. [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)). The `v1.0.11` tag is byte-identical to the published npm tarball (all 9 files match).
 
 **4 · Manual (profile.json)** — if you manage the profile by hand instead of the CLI, declare the official npm version directly in `$DSH_PROFILE_DIR/package.json`:
 
 ```json
 {
   "dependencies": {
-    "dsh-sticky-note-panel": "1.0.10"
+    "dsh-sticky-note-panel": "1.0.11"
   },
   "dsh": {
     "profile": {
@@ -107,7 +107,7 @@ Negative controls (to prove the assertions bite): temporarily remove a piece of 
 ### Implementation notes
 
 - Client halves of static boot bundles receive only `require` in their factory — `styles`/`host`/`harness` do not exist there. Styles are installed by hand as a `<style>` element appended to `document.head`.
-- Follows the shared `dsh-design-baseline`: the house stylesheet is injected once via `injectBaseline(document, 'dsh-sticky-notes')` and every root carries `.dsb-root`, so the host's `--dsw-alias-*` neutrals (each with a literal fallback) resolve correctly in both themes. Saturated colour comes only from the six `--dsb-accent-*` accents (the plugin uses the blue `--dsb-accent-speed` for badges, the primary button and selected states); CSS writes no other colours.
+- Follows the shared `dsh-design-baseline` and DSH's own neutral UI: the house stylesheet is injected once via `injectBaseline(document, 'dsh-sticky-notes')` and every root carries `.dsb-root`, so the host's `--dsw-alias-*` neutrals (each with a literal fallback) resolve correctly in both themes. Badges, the primary button and selected states use the baseline's inverted pair `--dsb-inverted-bg` / `--dsb-inverted-fg` (dark-on-light / light-on-dark), so selection reads as contrast, not colour. The only saturated pixels left are the functional `--dsb-accent-error` (error) and `--dsb-accent-warn` (warning) states; CSS writes no other colours.
 - `apply()` and the inner `slots.register` are both wrapped in try/catch: during boot the host audits every manifest plugin, and one non-active entry blocks the whole Web UI. A decorative panel must degrade to "not shown", never to "no app".
 - `MarkdownText` comes from the platform seed table via `require('@deepseek-ai/dsh-client-ui-primitives')`; when unavailable the note degrades to plain text.
 
@@ -130,7 +130,7 @@ Client-half slots: `shell.overlay` (floating tab + panel, order 900), `sidebar.p
 
 **dsh-sticky-notes** 是 [DeepSeek Harness](https://github.com/deepseek-ai)（DSH）的便签插件：对话旁一个可拖动的浮动便签窗，外加侧边栏完整页面、Markdown 预览、粘贴图片和设置项。数据全部存在浏览器 `localStorage`，无 Host 侧逻辑。
 
-已发布为预构建 npm 包（`dsh-sticky-note-panel@1.0.10`）与固定版本的 GitHub Release tarball，并已收录进 [awesome-dsh-plugin](https://awesome-dsh-plugin.com) 精选目录，可通过 dshmarket 搜索与安装。
+已发布为预构建 npm 包（`dsh-sticky-note-panel@1.0.11`）与固定版本的 GitHub Release tarball，并已收录进 [awesome-dsh-plugin](https://awesome-dsh-plugin.com) 精选目录，可通过 dshmarket 搜索与安装。
 
 ### 功能
 
@@ -182,17 +182,17 @@ dsh plugin --profile web add dsh-sticky-note-panel
 **3 · 固定版本 Release tarball**——同一份预构建内容，无需 npm：
 
 ```bash
-dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.10/dsh-sticky-note-panel-1.0.10.tgz"
+dsh plugin --profile web add "https://github.com/stallenlu/dsh-sticky-notes/releases/download/v1.0.11/dsh-sticky-note-panel-1.0.11.tgz"
 ```
 
-> 当 npm 包与 tarball 同时存在时，dshmarket 优先用 npm；固定版本的 Release tarball 作为兜底，同时供其它商店（如 [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)）使用。`v1.0.10` 标签与已发布的 npm tarball 逐字节一致（9 个文件全部匹配）。
+> 当 npm 包与 tarball 同时存在时，dshmarket 优先用 npm；固定版本的 Release tarball 作为兜底，同时供其它商店（如 [dshfind.com](https://dshfind.com/zh/plugins/stallenlu/dsh-sticky-notes)）使用。`v1.0.11` 标签与已发布的 npm tarball 逐字节一致（9 个文件全部匹配）。
 
 **4 · 手动声明（profile.json）**——如果不走命令行、而是直接管理 profile，就在 `$DSH_PROFILE_DIR/package.json` 里声明官方 npm 版本：
 
 ```json
 {
   "dependencies": {
-    "dsh-sticky-note-panel": "1.0.10"
+    "dsh-sticky-note-panel": "1.0.11"
   },
   "dsh": {
     "profile": {
@@ -216,7 +216,7 @@ node --check client.js
 ### 实现要点
 
 - 静态 boot bundle 的 client 半面工厂只收到 `require`——`styles`/`host`/`harness` 在这里不存在。样式自建 `<style>` 元素插入 `document.head`。
-- 配色统一到 `dsh-design-baseline`：通过 `injectBaseline(document, 'dsh-sticky-notes')` 注入一次公共样式表，所有根节点都带 `.dsb-root`，让宿主的 `--dsw-alias-*` 中性色（均带字面 fallback）在明暗主题下都能正确解析。有彩色只来自六个 `--dsb-accent-*` accent（便签用其中的蓝色 `--dsb-accent-speed` 作徽标、主按钮与选中态），CSS 不写其它颜色。
+- 配色统一到 `dsh-design-baseline` 并遵循 DSH 官方的中性界面：通过 `injectBaseline(document, 'dsh-sticky-notes')` 注入一次公共样式表，所有根节点都带 `.dsb-root`，让宿主的 `--dsw-alias-*` 中性色（均带字面 fallback）在明暗主题下都能正确解析。徽标、主按钮与选中态使用基线里的反色对 `--dsb-inverted-bg` / `--dsb-inverted-fg`（亮色深底白字、暗色浅底深字），选中靠反差而不是彩色。仅剩的有彩色是功能状态色 `--dsb-accent-error`（错误）/ `--dsb-accent-warn`（警告），CSS 不写其它颜色。
 - `apply()` 整体与生成器内 `slots.register` 都包 try/catch：boot 期宿主会审计每个 manifest 插件，一条未 active 就让整个 Web UI 拒绝启动。装饰性组件必须降级为「不显示」，而不是「崩宿主」。
 - `MarkdownText` 来自平台 seed 表 `require('@deepseek-ai/dsh-client-ui-primitives')`，取不到时优雅退回纯文本。
 
